@@ -1,22 +1,23 @@
 #include <iostream>
 #include <omp.h>
 
-#define n 1000
+#define n 2
 
 using namespace std;
 
 void parallel_mul(const unsigned* X, const unsigned* Y, size_t N, unsigned* Z) {
-    unsigned carry = 0;
+    unsigned carry;
     for (int j = (int)N - 1; j >= 0; --j)
         for (int i = (int)N - 1; i >= 0; --i) {
-            carry = Z[i + j + 1] ? Z[i + j + 1] + X[i] * Y[j] + carry : X[i] * Y[j] + carry;
+            carry = Z[i + j + 1] + X[i] * Y[j];
             Z[i + j + 1] = carry % 10;
             carry /= 10;
+            Z[i + j] = Z[i + j] + carry;
         }
 }
 
 int main() {
-    unsigned X[n], Y[n], Z[2 * n - 1];
+    unsigned X[n], Y[n], Z[2 * n];
 
     for (auto &digit: Z) digit = 0;
 
